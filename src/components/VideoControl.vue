@@ -7,26 +7,28 @@
       <!-- 菜单栏 -->
       <div class="menu">
         <div class="controlMenu">
-          <div class="iconfont icon-dadian" :title="clickmsg" @click="onControl(1)">
+          <div :title="clickmsg" @click="onControl(1)">
+            <svg-icon icon-class="dot" />
             <span>{{ clickmsg }}</span>
           </div>
           <!-- <div @click="onControl(2)" class="iconfont icon-biaoji" title="视音频分离">
             <span>视音频分离</span>
           </div> -->
-          <div
-            class="iconfont icon-kaishijianji"
+          <!-- <div
             title="快速选段"
             @click="onControl(3)"
             @keyup.83="onControl(3)"
           >
+            <svg-icon icon-class="cut" />
             <span>快速选段</span>
-          </div>
-          <div class="iconfont icon-zidong" title="自动选段" @click="onControl(4)">
+          </div> -->
+          <div title="自动选段" @click="onControl(4)">
+            <svg-icon icon-class="automatic" />
             <span>自动选段</span>
           </div>
           <div class="contorlBtn">
             <el-button class="el-icon-success" size="mini" @click="serveSubmit('00')">分段提交</el-button>
-            <el-button class="iconfont icon-tuisong" size="mini" @click="serveSubmit('01')">合并提交</el-button>
+            <!-- <el-button size="mini" @click="serveSubmit('01')"><svg-icon icon-class="merge" />合并提交</el-button> -->
           </div>
         </div>
         <div class="videoContorl">
@@ -38,17 +40,17 @@
           <i v-if="bofangFlag" class="iconfont icon-bofang" @click="play" />
           <i v-else class="icon-bofang1 iconfont" @click="stop" />
           <i class="iconfont icon-kuaijin-" @click="nextpage" /> -->
-          <svg-icon icon-class="goback" @click="prevPage" />
-          <svg-icon v-if="bofangFlag" icon-class="startPlay" @click="play" />
-          <svg-icon v-else icon-class="stopPlay" @click="stop" />
-          <svg-icon icon-class="forward" @click="nextpage" />
+          <svg-icon icon-class="goback" class-name="cutter-icon" @click="prevPage" />
+          <svg-icon v-if="bofangFlag" icon-class="startPlay" class-name="cutter-icon" @click="play" />
+          <svg-icon v-else icon-class="stopPlay" class-name="cutter-icon" @click="stop" />
+          <svg-icon icon-class="forward" class-name="cutter-icon" @click="nextpage" />
         </div>
         <div class="rule">
-          <span class="iconfont icon-fanxuan" title="反选" @click="turnReserve" />
-          <span class="iconfont icon-qingchu" title="删除所有拆条" @click="clearAllVideo" />
-          <div class="block">
+          <!-- <span class="iconfont icon-fanxuan" title="反选" @click="turnReserve"><svg-icon icon-class="invert-selection" class-name="cutter-icon" /></span> -->
+          <span class="iconfont icon-qingchu" title="删除所有拆条" @click="clearAllVideo"><svg-icon icon-class="delete" class-name="cutter-icon" /></span>
+          <!-- <div class="block">
             <el-slider v-model="value2" :step="20" show-stops @change="stepChange" />
-          </div>
+          </div> -->
         </div>
       </div>
       <!-- 进度条 -->
@@ -92,17 +94,16 @@
               @mouseup="pkLup"
             >
               <!-- 左微调 -->
-              <el-button class="weitiaoL"> <span class="icon-zuo iconfont" @click="weitiao(index,1,1)" />微调<span class="icon-you iconfont" @click="weitiao(index,1,2)" /></el-button>
+              <el-button class="weitiaoL"> <span class="icon-zuo iconfont" @click="weitiao(index,1,1)"><svg-icon icon-class="prev" class-name="i-middle-size" /></span>微调<span class="icon-you iconfont" @click="weitiao(index,1,2)"><svg-icon icon-class="next" class-name="i-middle-size" /></span></el-button>
               <span
                 class="dragLeft icon-zuo iconfont"
                 @mousedown="pkLdown(index,$event)"
               />
-
               <div>
-                <span class="icon-bofang iconfont" @click="subSection(item)" />
-                <span class="icon-qingchu iconfont" @click="clearCoverBox(index)" />
+                <span class="icon-bofang iconfont" @click="subSection(item)"><svg-icon icon-class="startPlay" /></span>
+                <span class="icon-qingchu iconfont" @click="clearCoverBox(index)"><svg-icon icon-class="delete" /></span>
                 <div>{{ item.timeLong }}</div>
-                <div class="icon-xiugai iconfont" @click="changeText(index)">{{ item.text }}</div>
+                <div class="icon-xiugai iconfont" @click="changeText(index)"><svg-icon icon-class="edit" />{{ item.text }}</div>
               </div>
               <span
                 class="dragRight icon-you iconfont"
@@ -110,7 +111,7 @@
                 @mouseup="pkRup"
               />
               <!-- 右微调 -->
-              <el-button class="weitiaoR"> <span class="icon-zuo iconfont" @click="weitiao(index,2,1)" />微调<span class="icon-you iconfont" @click="weitiao(index,2,2)" /></el-button>
+              <el-button class="weitiaoR"> <span class="icon-zuo iconfont" @click="weitiao(index,2,1)"><svg-icon icon-class="prev" class-name="i-middle-size" /></span>微调<span class="icon-you iconfont" @click="weitiao(index,2,2)"><svg-icon icon-class="next" class-name="i-middle-size" /></span></el-button>
             </div>
           </div>
         </div>
@@ -205,6 +206,7 @@ export default {
   },
   data() {
     return {
+      // 播放器选项
       options: {
         isLive: false,
         width: '100%',
@@ -240,11 +242,11 @@ export default {
       maxTimeLong: 360000, // 除以10 即为刻度尺 个 刻度
       videoLongTime: '00:00:00', // 格式后的视频时长
       value2: 80, // 选择刻度尺刻度大小
-      canvas: null,
-      canvasWidth: 60000,
-      cxt: null,
+      canvas: null, // 画布对象
+      canvasWidth: 60000, // 画布长度
+      cxt: null, // 画布上下文
       clickmsg: '打入点', // 打入打出
-      config: {},
+      config: {}, // 画布配置
       timeCurrentLeft: '00:00:00:00', // 当前距离左侧时间
       clickCurrentTime: null, // 点击距离
 
@@ -387,7 +389,9 @@ export default {
       this.videoLongTime = this.setTime(videoDuration)
       this.videoLong = videoDuration
       this.maxTimeLong = Math.ceil(videoDuration) * 100
-      this.imgWidth = (this.videoLong / 60 / this.number) * 250 + 'px'
+      // 设置图片的宽度
+      this.imgWidth = (this.videoLong / 60 / this.number) * 500 + 'px'
+      // 设置画布的宽度
       this.canvasWidth = parseInt(this.imgWidth) + 40
       this.target = parseFloat(this.imgWidth) - 40
       this.$nextTick(() => {
@@ -411,7 +415,7 @@ export default {
         // unit:10,
         x: 20, // 刻度尺x坐标位置
         y: 70, // 刻度尺y坐标位置
-        w: 50, // 刻度线的间隔
+        w: 100, // 刻度线的间隔
         h: 10, // 刻度线基础长度
 
         // 事件相关
@@ -428,7 +432,7 @@ export default {
       timeMove.style.left = '-40px'
 
       // 设置图片盒子宽度
-      this.imgWidth = (this.videoLong / 60 / this.number) * 250 + 'px'
+      // this.imgWidth = (this.videoLong / 60 / this.number) * 500 + 'px'
       // this.pickeddeng = document.getElementById("pickeddeng");
       // this.pickeddeng.addEventListener("scroll", this.handleScroll, true);
 
@@ -446,9 +450,9 @@ export default {
       // console.log(currentCut);
       const timeMove = document.getElementById('blueBg')
 
-      // const movePX = (100 / this.number / 100) * 10;
+      // const movePX = (100 / this.number * 60  / 100) * 10;
       // const currentLeft = parseFloat(window.getComputedStyle(timeMove).left);
-      const movePX = (100 / this.number / 100) * 10 // 移动距离
+      const movePX = (100 / this.number * 60 / 500) * 10 // 移动距离
       if (flag1 === 1){
         // 移动时间轴  更新时间
         timeMove.style.left = (parseFloat(currentCut.left) - 40) + 'px'
@@ -529,6 +533,7 @@ export default {
       this.stop()
       this.blueBgFlag = true
     },
+    // 移动时间指针
     blueBgMove(e){
       if (!this.blueBgFlag){
         return
@@ -545,12 +550,15 @@ export default {
       this.timeCurrentLeft = this.setDetailTime(
         parseFloat(
           Math.floor(
-            (this.number / 100) * (this.topMoveBox.offsetLeft + 40) * 100
+            (this.number * 60 / 500) * (this.topMoveBox.offsetLeft + 40) * 100
           ) / 100
         ).toFixed(2)
       )
-      this.$emit('currentTime', this.timeCurrentLeft)
+      // this.$emit('currentTime', this.timeCurrentLeft)
+      // 设置播放器的当前时间
+      this.setCurrentTime(this.timeCurrentLeft)
     },
+    // 鼠标放开，
     blueBgUp(){
       this.blueBgFlag = false
     },
@@ -587,7 +595,7 @@ export default {
         this.timeCurrentLeft = this.setDetailTime(
           parseFloat(
             Math.floor(
-              (this.number / 100) * (this.topMoveBox.offsetLeft + 40) * 100
+              (this.number * 60 / 500) * (this.topMoveBox.offsetLeft + 40) * 100
             ) / 100
           ).toFixed(2)
         )
@@ -611,7 +619,7 @@ export default {
         this.timeCurrentLeft = this.setDetailTime(
           parseFloat(
             Math.floor(
-              (this.number / 100) * (this.topMoveBox.offsetLeft + 40) * 100
+              (this.number * 60 / 500) * (this.topMoveBox.offsetLeft + 40) * 100
             ) / 100
           ).toFixed(2)
         )
@@ -633,7 +641,7 @@ export default {
         this.timeCurrentLeft = this.setDetailTime(
           parseFloat(
             Math.floor(
-              (this.number / 100) * (this.topMoveBox.offsetLeft + 40) * 100
+              (this.number * 60 / 500) * (this.topMoveBox.offsetLeft + 40) * 100
             ) / 100
           ).toFixed(2)
         )
@@ -745,7 +753,7 @@ export default {
     // 鼠标悬浮显示当前图片
     showMoveImg($event) {
       const currentTime = this.setDetailTime(
-        ($event.offsetX - 20) * (this.number / 100)
+        ($event.offsetX - 20) * (this.number * 60 / 500)
       )
       this.$emit('currentImg', currentTime)
       // console.log($event)
@@ -978,7 +986,7 @@ export default {
       this.timeCurrentLeft = this.setDetailTime(
         parseFloat(
           Math.floor(
-            (this.number / 100) * (this.topMoveBox.offsetLeft + 40) * 100
+            (this.number * 60 / 500) * (this.topMoveBox.offsetLeft + 40) * 100
           ) / 100
         ).toFixed(2)
       )
@@ -994,7 +1002,7 @@ export default {
       this.timeCurrentLeft = this.setDetailTime(
         parseFloat(
           Math.floor(
-            (this.number / 100) * (this.topMoveBox.offsetLeft + 40) * 100
+            (this.number * 60 / 500) * (this.topMoveBox.offsetLeft + 40) * 100
           ) / 100
         ).toFixed(2)
       )
@@ -1080,7 +1088,7 @@ export default {
     //   }
       this.bofangFlag = false
       // this.$emit('paly', true) // 播放视频
-      this.$refs.vueAliplayerV2.play()
+      this.$refs.vueAliplayerV2.play() // 播放视频
       if (this.currentRunMsg === 'clickIn') {
         this.clickIninterval()
         return
@@ -1115,12 +1123,12 @@ export default {
         // }
         this.timeCurrentLeft = this.setDetailTime(
           parseFloat(
-            Math.floor((this.number / 100) * (timeMove.offsetLeft + 40) * 100) /
+            Math.floor((this.number * 60 / 500) * (timeMove.offsetLeft + 40) * 100) /
               100
           ).toFixed(2)
         )
       }, 20)
-      const pxecachS = this.number / 100 // 对应的每px所需要的秒
+      const pxecachS = this.number * 60 / 500 // 对应的每px所需要的秒
       // console.log(parseInt(target), parseInt(this.moveLeft), pxecachS);
       const timeCount =
         (parseInt(this.target) - parseInt(this.moveLeft)) * pxecachS
@@ -1154,20 +1162,21 @@ export default {
         }
         this.timeCurrentLeft = this.setDetailTime(
           parseFloat(
-            Math.floor((this.number / 100) * (timeMove.offsetLeft + 40) * 100) /
+            Math.floor((this.number * 60 / 500) * (timeMove.offsetLeft + 40) * 100) /
               100
           ).toFixed(2)
         )
       }, 20)
-      const pxecachS = this.number / 100 // 对应的每px所需要的秒
+      const pxecachS = this.number * 60 / 500 // 对应的每px所需要的秒
       // console.log(parseInt(target), parseInt(this.moveLeft), pxecachS);
       const timeCount = (parseInt(target) - parseInt(this.moveLeft)) * pxecachS
       // console.log(timeCount);
       timeMove.style.transition = `all ${timeCount}s linear`
     },
-    // 暂停视频
+    // 停止播放
     stop() {
       // this.$emit('paly', false) // 暂停视频
+      // 暂停播放视频
       this.$refs.vueAliplayerV2.pause()
       this.bofangFlag = true
       // this.zanting();
@@ -1180,19 +1189,21 @@ export default {
       clearInterval(this.subTimeId)
       clearInterval(this.scrollId)
     },
-
+    // 后退
     prevPage() {
       // 上一帧
       this.stop()
       const timeMove = document.getElementById('blueBg')
-      const movePX = (100 / this.number / 100) * 10
+      // 每次移动的px数
+      // const movePX = (100 / this.number * 60 / 500) * 10
+      const movePX = 30 / (this.number * 60 / 500)
       const currentLeft = parseFloat(window.getComputedStyle(timeMove).left)
       if (currentLeft <= -40) {
         timeMove.style.left = '-40px'
         timeMove.style.transition = 'none'
         this.timeCurrentLeft = this.setDetailTime(
           parseFloat(
-            Math.floor((this.number / 100) * (timeMove.offsetLeft + 40) * 100) /
+            Math.floor((this.number * 60 / 500) * (timeMove.offsetLeft + 40) * 100) /
               100
           ).toFixed(2)
         )
@@ -1201,21 +1212,24 @@ export default {
       const fininal = currentLeft - movePX
       timeMove.style.left = fininal + 'px'
       this.timeCurrentLeft = this.getStartEndTime(fininal + 40)
-      this.$emit('currentTime', this.timeCurrentLeft) // 触发上一帧下一帧
+      // this.$emit('currentTime', this.timeCurrentLeft) // 触发上一帧下一帧
+      this.$refs.vueAliplayerV2.seek(this.setCurrentTime(this.timeCurrentLeft))
     },
-
+    // 前进
     nextpage() {
       // 下一帧
       this.stop()
       const timeMove = document.getElementById('blueBg')
-      const movePX = (100 / this.number / 100) * 10
+      // const movePX = (100 / this.number * 60 / 500) * 10
+      // 前进30秒，需要的px数
+      const movePX = 30 / (this.number * 60 / 500)
       const currentLeft = parseFloat(window.getComputedStyle(timeMove).left)
       if (currentLeft >= parseFloat(this.imgWidth) - 40) {
         timeMove.style.left = parseFloat(this.imgWidth) - 40 + 'px'
         timeMove.style.transition = 'none'
         this.timeCurrentLeft = this.setDetailTime(
           parseFloat(
-            Math.floor((this.number / 100) * (timeMove.offsetLeft + 40) * 100) /
+            Math.floor((this.number * 60 / 500) * (timeMove.offsetLeft + 40) * 100) /
               100
           ).toFixed(2)
         )
@@ -1224,7 +1238,8 @@ export default {
       const fininal = currentLeft + movePX
       timeMove.style.left = fininal + 'px'
       this.timeCurrentLeft = this.getStartEndTime(fininal + 40)
-      this.$emit('currentTime', this.timeCurrentLeft)
+      // this.$emit('currentTime', this.timeCurrentLeft)
+      this.$refs.vueAliplayerV2.seek(this.setCurrentTime(this.timeCurrentLeft))
     },
     // 改变覆盖盒子大小
     changeCoverSize(index) {},
@@ -1268,12 +1283,12 @@ export default {
 
         this.timeCurrentLeft = this.setDetailTime(
           parseFloat(
-            Math.floor((this.number / 100) * (timeMove.offsetLeft + 40) * 100) /
+            Math.floor((this.number * 60 / 500) * (timeMove.offsetLeft + 40) * 100) /
               100
           ).toFixed(2)
         )
       }, 10)
-      const pxecachS = this.number / 100 // 对应的每px所需要的秒
+      const pxecachS = this.number * 60 / 500 // 对应的每px所需要的秒
       // console.log(parseInt(target), parseInt(this.moveLeft), pxecachS);
       const timeCount = (parseInt(target) - parseInt(this.moveLeft)) * pxecachS
       // console.log(timeCount);
@@ -1340,7 +1355,7 @@ export default {
       this.timeCurrentLeft = this.setDetailTime(
         parseFloat(
           Math.floor(
-            (this.number / 100) * (this.topMoveBox.offsetLeft + 40) * 100
+            (this.number * 60 / 500) * (this.topMoveBox.offsetLeft + 40) * 100
           ) / 100
         ).toFixed(2)
       )
@@ -1363,7 +1378,7 @@ export default {
 
       this.drawCan(this.cxt, this.config, that.number)
 
-      // 鼠标按下时 记录状态及位置
+      // 为canvas添加鼠标双击事件监听
       this.canvas.addEventListener('dblclick', function(e) {
         const scrollpd = document.getElementById('pickeddeng')
         const scrollLeft = scrollpd.scrollLeft
@@ -1387,7 +1402,9 @@ export default {
         that.config.mousedown = true
         that.config.start = [e.offsetX, e.offsetY]
         that.bofangFlag = true
-        that.$emit('currentTime', that.timeCurrentLeft)
+        // that.$emit('currentTime', that.timeCurrentLeft)
+        // 重置视频的是屁的播时间
+        that.setCurrentTime(that.timeCurrentLeft)
         // console.log(e.offsetX, e.offsetY)
       })
       // 鼠标放开时 重置状态
@@ -1417,7 +1434,7 @@ export default {
     },
     // 绘制画布
     drawCan(cxt, config, number) {
-      const size = (config.width - 40) / 50 // size/10则生成多少个刻度
+      const size = (config.width - 40) / 100 // size/10则生成多少个刻度
       const x = config.x || 0
       const y = config.y || 0
       const w = config.w || 5
@@ -1526,6 +1543,7 @@ export default {
       secondTime = secondTime < 10 ? String('0' + secondTime) : secondTime
       return hourTime + ':' + minuteTime + ':' + secondTime
     },
+    // 设置每个拆条的时间
     setDetailTime(time) {
       // console.log(time)
       let detail = null
@@ -1559,10 +1577,12 @@ export default {
       secondTime = secondTime < 10 ? String('0' + secondTime) : secondTime
       return hourTime + ':' + minuteTime + ':' + secondTime + '.' + detail
     },
+    // 移动时间进度条
     timeMove() {
+      // 获取时间指针对象
       const timeMove = document.getElementsByClassName('blueBg')[0]
       if (this.clickmsg === '打出点') {
-        // 添加结束时间
+        // 获取最后一个视频剪切对象
         const currentBox = this.cutCoverList[this.cutCoverList.length - 1]
         const start = this.getCountS(currentBox.startTime)
         const end = this.getCountS(
@@ -1587,7 +1607,7 @@ export default {
         //   this.timeCurrentLeft = this.setDetailTime(
         //     parseFloat(
         //       Math.floor(
-        //         (this.number / 100) * (timeMove.offsetLeft + 40) * 100
+        //         (this.number * 60  / 100) * (timeMove.offsetLeft + 40) * 100
         //       ) / 100
         //     ).toFixed(2)
         //   );
@@ -1665,7 +1685,7 @@ export default {
           this.timeCurrentLeft = this.setDetailTime(
             parseFloat(
               Math.floor(
-                (this.number / 100) * (moveLeft.offsetLeft + 40) * 100
+                (this.number * 60 / 500) * (moveLeft.offsetLeft + 40) * 100
               ) / 100
             ).toFixed(2)
           )
@@ -1678,7 +1698,7 @@ export default {
     getStartEndTime(leftPX) {
       return this.setDetailTime(
         parseFloat(
-          Math.floor((this.number / 100) * leftPX * 100) / 100
+          Math.floor((this.number * 60 / 500) * leftPX * 100) / 100
         ).toFixed(2)
       )
     },
@@ -1961,7 +1981,7 @@ export default {
       timeMove.style.transition = 'none'
       this.timeCurrentLeft = this.setDetailTime(
         parseFloat(
-          Math.floor((this.number / 100) * (timeMove.offsetLeft + 40) * 100) /
+          Math.floor((this.number * 60 / 500) * (timeMove.offsetLeft + 40) * 100) /
             100
         ).toFixed(2)
       )
@@ -1982,7 +2002,7 @@ export default {
       timeMove.style.transition = 'none'
       this.timeCurrentLeft = this.setDetailTime(
         parseFloat(
-          Math.floor((this.number / 100) * (timeMove.offsetLeft + 40) * 100) /
+          Math.floor((this.number * 60 / 500) * (timeMove.offsetLeft + 40) * 100) /
             100
         ).toFixed(2)
       )
@@ -1994,8 +2014,19 @@ export default {
     },
     testMethod(args){
       // console.log(object);
+    },
+    // 设置播放器的当前时间
+    setCurrentTime(data){
+      this.$refs.vueAliplayerV2.seek(this.turnToSeconds(data))
+    },
+    // 将时间字符串转为秒数
+    turnToSeconds(timeString){
+      var h = timeString.split(':')[0]
+      var m = timeString.split(':')[1]
+      var s = timeString.split(':')[2]
+      var ms = timeString.split('.')[1]
+      return parseInt(h) * 3600 + parseInt(m) * 60 + parseInt(s) + '.' + ms
     }
-
   }
 }
 </script>
@@ -2052,27 +2083,27 @@ footer {
   border-top: 2px solid #1d1e22;
 
   .menu {
-    width: 100%;
-    height: 40px;
     display: flex;
     justify-content: space-between;
+    width: 100%;
+    height: 40px;
     background: #1d1e22;
     .controlMenu {
+      display: flex;
+      align-items: center;
       width: 670px;
       padding: 0 20px;
-      display: flex;
       box-sizing: border-box;
-      align-items: center;
       > div {
+        position: relative;
+        display: flex;
+        align-items: center;
         height: 30px;
         margin-right: 20px;
-        position: relative;
         font-size: 30px;
         color: #707070;
         cursor: pointer;
         white-space: nowrap;
-        display: flex;
-        align-items: center;
         &::after {
           content: "";
           display: block;
@@ -2091,8 +2122,8 @@ footer {
         }
       }
       .contorlBtn {
-        margin: 0 0 0 20px;
         display: flex;
+        margin: 0 0 0 20px;
         &::after {
           width: 0;
         }
@@ -2164,8 +2195,8 @@ footer {
     }
     .videoContorl {
       display: flex;
-      color: #8c97b1;
       align-items: center;
+      color: #8c97b1;
       .timeLong {
         display: flex;
         justify-content: space-between;
@@ -2196,24 +2227,24 @@ footer {
       }
     }
     .rule {
+      display: flex;
+      align-items: center;
       width: 390px;
       padding: 0 20px;
-      display: flex;
       box-sizing: border-box;
-      align-items: center;
       .el-slider {
         width: 150px;
       }
       > span {
+        position: relative;
+        display: flex;
+        align-items: center;
         height: 30px;
         margin-right: 20px;
-        position: relative;
         font-size: 22px;
         color: #707070;
         cursor: pointer;
         white-space: nowrap;
-        display: flex;
-        align-items: center;
         &:hover {
           color: #fff;
         }
@@ -2306,59 +2337,52 @@ footer {
         // overflow: hidden;
       }
       .imgbackground {
+        position: relative;
         left: 20px;
         height: 100px;
         background-repeat: repeat !important;
         background-size: contain !important;
         // background: url("../assets/demo.jpg");
-        position: relative;
         // .coverlistActive {
         //   // border-left: 3px solid #
         // }
         .coverlist {
-          background: rgba(23, 149, 255, 0.3);
           position: absolute;
           top: 0;
           height: 100px;
           display: flex;
           flex-wrap: nowrap;
+          border: 1px solid;
+          background: rgba(23, 149, 255, 0.3);
           box-sizing: border-box;
           overflow: hidden;
-          border: 1px solid;
           &:hover {
             border: 1px solid #ccc;
           }
           .dragLeft {
-            width: 16px;
-            height: 100px;
-            line-height: 100px;
-            color: #fff;
-            font-size: 14px;
             position: absolute;
             left: 0px;
-            cursor: e-resize;
-            text-align: center;
-          }
-          .dragRight {
-            text-align: center;
             width: 16px;
             height: 100px;
             line-height: 100px;
-            color: #fff;
+            text-align: center;
             font-size: 14px;
+            color: #fff;
+            cursor: e-resize;
+          }
+          .dragRight {
             position: absolute;
             right: 0px;
+            width: 16px;
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
             cursor: w-resize;
           }
 
           > div {
-            > div {
-              font-size: 13px;
-              color: #fff;
-              cursor: pointer;
-              width: 60px;
-              margin: auto;
-            }
             width: 100%;
             height: 100%;
             margin: 0 auto 0;
@@ -2370,9 +2394,18 @@ footer {
             // flex-wrap: nowrap;
             // justify-content: center;
             overflow: hidden;
-            span {
+            > div {
+              width: 70px;
+              margin: auto;
+              line-height: 1.5em;
+              font-size: 13px;
               color: #fff;
+              cursor: pointer;
+            }
+            span {
+              line-height: 1.5em;
               font-size: 14px;
+              color: #fff;
               cursor: pointer;
             }
           }
@@ -2411,5 +2444,20 @@ footer {
     }
   }
 }
+.cutter-icon {
+  width: 25px;
+  height: 25px;
+  margin: 0 15px;
+  cursor: pointer;
+  &:hover {
+    color: #fff;
+  }
+}
+
+.i-middle-size {
+  width: 16px;
+  height: 16px;
+}
+
 </style>
 
